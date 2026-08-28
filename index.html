@@ -5,15 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>La lettre de la DRANE</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
   :root {
-    --marine: #0b3d5c;
-    --bordeaux: #a51c30;
-    --ardoise: #4a5568;
-    --cyan: #29abe2;
-    --vert: #8dc63f;
-    --fond: #f2f4f6;
+    --violet: #6d4aa8;
+    --violet-clair: #9b7fd4;
+    --violet-fonce: #4a2f7a;
+    --ardoise: #6b5b8a;
+    --rose: #b57edc;
+    --vert: #7fb069;
+    --fond: #f6f4fa;
   }
   * { box-sizing: border-box; }
   body {
@@ -24,7 +26,7 @@
   }
   .barre-outils {
     background: #ffffff;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #e4defc;
     padding: 16px 24px;
     display: flex;
     flex-wrap: wrap;
@@ -38,11 +40,11 @@
   .barre-outils h1 {
     font-size: 16px;
     margin: 0;
-    color: var(--marine);
+    color: var(--violet-fonce);
     flex: 1;
   }
   .btn {
-    background: var(--marine);
+    background: var(--violet);
     color: #fff;
     border: none;
     padding: 10px 18px;
@@ -53,10 +55,11 @@
   }
   .btn.secondaire {
     background: #ffffff;
-    color: var(--marine);
-    border: 2px solid var(--marine);
+    color: var(--violet);
+    border: 2px solid var(--violet);
   }
   .btn:hover { opacity: 0.85; }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
   input[type="file"] { display: none; }
 
   .filtres {
@@ -72,14 +75,14 @@
     border-radius: 20px;
     font-size: 13px;
     font-weight: bold;
-    border: 2px solid var(--marine);
+    border: 2px solid var(--violet);
     background: #fff;
-    color: var(--marine);
+    color: var(--violet);
     cursor: pointer;
     user-select: none;
   }
   .filtre-tag.actif {
-    background: var(--marine);
+    background: var(--violet);
     color: #fff;
   }
 
@@ -102,7 +105,7 @@
     object-fit: contain;
   }
   .en-tete {
-    background: var(--marine);
+    background: var(--violet-fonce);
     color: #fff;
     padding: 24px 32px 28px 32px;
     text-align: center;
@@ -112,7 +115,7 @@
     font-size: 11.5px;
     letter-spacing: 1px;
     text-transform: uppercase;
-    color: #a9d4ea;
+    color: #d9c8f2;
     margin: 0 0 6px 0;
   }
   .en-tete h2 {
@@ -123,7 +126,7 @@
   .en-tete .date-edition {
     margin-top: 8px;
     font-size: 13px;
-    color: #cfe8f7;
+    color: #e6d9f7;
   }
   .intro {
     padding: 28px 32px 8px 32px;
@@ -134,8 +137,8 @@
     padding: 16px 32px 8px 32px;
     font-size: 18px;
     font-weight: bold;
-    color: var(--marine);
-    border-top: 3px solid #eef1f6;
+    color: var(--violet-fonce);
+    border-top: 3px solid #eee7fa;
     margin-top: 8px;
   }
   .bloc-evenements {
@@ -144,14 +147,14 @@
   .evenement {
     display: flex;
     gap: 16px;
-    background: #f7f9fc;
+    background: #f6f2fc;
     border-radius: 8px;
     padding: 16px;
     margin-bottom: 12px;
     align-items: center;
   }
   .date-badge {
-    background: var(--marine);
+    background: var(--violet);
     color: #fff;
     border-radius: 6px;
     text-align: center;
@@ -177,7 +180,7 @@
     color: var(--ardoise);
     margin: 20px 0 10px 0;
     padding-bottom: 6px;
-    border-bottom: 2px solid #eef1f6;
+    border-bottom: 2px solid #eee7fa;
   }
   .grille-articles {
     display: grid;
@@ -191,8 +194,8 @@
   .carte {
     border-radius: 10px;
     padding: 18px;
-    background: #f7f9fc;
-    border-left: 5px solid var(--marine);
+    background: #f6f2fc;
+    border-left: 5px solid var(--violet);
     display: flex;
     flex-direction: column;
   }
@@ -213,8 +216,8 @@
     padding: 3px 9px;
     border-radius: 12px;
   }
-  .tag-public.enseignants { background: var(--marine); }
-  .tag-public.eleves { background: var(--cyan); }
+  .tag-public.enseignants { background: var(--violet-fonce); }
+  .tag-public.eleves { background: var(--rose); }
   .tag-public.parents { background: var(--vert); }
   .carte h3 { font-size: 15px; margin: 0 0 8px 0; color: #111; }
   .carte p {
@@ -227,23 +230,28 @@
   .carte a {
     font-size: 13px;
     font-weight: bold;
-    color: var(--bordeaux);
+    color: var(--violet-fonce);
     text-decoration: none;
   }
   .pied {
-    background: #f7f9fc;
+    background: #f6f2fc;
     padding: 20px 32px;
     text-align: center;
     font-size: 12px;
     color: #888;
   }
-  .pied a { color: var(--marine); }
+  .pied a { color: var(--violet); }
   #zone-vide {
     max-width: 700px;
     margin: 60px auto;
     text-align: center;
     color: #888;
     padding: 40px;
+  }
+  #statut-pdf {
+    font-size: 12px;
+    color: #888;
+    margin-left: 4px;
   }
   @media print {
     .barre-outils, .filtres { display: none; }
@@ -259,6 +267,7 @@
   <input type="file" id="fichier-excel" accept=".xlsx,.xls" />
   <button class="btn secondaire" id="btn-json">📄 Utiliser data.json</button>
   <button class="btn" id="btn-pdf">⬇️ Exporter en PDF</button>
+  <span id="statut-pdf"></span>
 </div>
 
 <div class="filtres" id="zone-filtres" style="display:none;">
@@ -274,8 +283,8 @@
 
 <div id="zone-newsletter" style="display:none;">
   <div class="en-tete-logos">
-    <img src="logo_drane.png" alt="DRANE Hauts-de-France" onerror="this.style.display='none'" />
-    <img src="logo_academie_lille.png" alt="Académie de Lille" onerror="this.style.display='none'" />
+    <img id="logo-drane" src="logo_drane.png" alt="DRANE Hauts-de-France" crossorigin="anonymous" onerror="this.style.display='none'" />
+    <img id="logo-academie" src="logo_academie_lille.png" alt="Académie de Lille" crossorigin="anonymous" onerror="this.style.display='none'" />
   </div>
   <div class="en-tete">
     <p class="surtitre" id="v-nom-newsletter"></p>
@@ -355,7 +364,7 @@ function rendreNewsletter(data) {
     grille.className = 'grille-articles';
 
     categories[cat].forEach(art => {
-      const couleur = art.couleur_tag || '#0b3d5c';
+      const couleur = art.couleur_tag || '#6d4aa8';
       const publics = art.publics || (art.public_cible ? [art.public_cible] : []);
       const div = document.createElement('div');
       div.className = 'carte';
@@ -415,19 +424,15 @@ document.querySelectorAll('.filtre-tag').forEach(tag => {
 
 function excelVersJSON(workbook) {
   const feuille = (nom) => XLSX.utils.sheet_to_json(workbook.Sheets[nom] || {}, {defval:''});
-
   const contenuRows = feuille('Contenu');
   const contenu = {};
   contenuRows.forEach(r => { contenu[r.Champ] = r.Valeur; });
-
   const articlesRaw = feuille('Articles');
   const articles = articlesRaw.map(a => ({
     ...a,
     publics: (a.publics || '').split(',').map(s => s.trim()).filter(Boolean)
   }));
-
   const evenements = feuille('Evenements');
-
   return { contenu, articles, evenements };
 }
 
@@ -451,20 +456,90 @@ document.getElementById('btn-json').addEventListener('click', function() {
     .catch(err => alert('Impossible de charger data.json : ' + err));
 });
 
-document.getElementById('btn-pdf').addEventListener('click', function() {
+function attendreImages(container) {
+  const imgs = Array.from(container.querySelectorAll('img')).filter(img => img.style.display !== 'none');
+  const promesses = imgs.map(img => {
+    if (img.complete && img.naturalWidth > 0) return Promise.resolve();
+    return new Promise(resolve => {
+      img.addEventListener('load', resolve, { once: true });
+      img.addEventListener('error', resolve, { once: true });
+      setTimeout(resolve, 3000);
+    });
+  });
+  return Promise.all(promesses);
+}
+
+document.getElementById('btn-pdf').addEventListener('click', async function() {
+  const btn = this;
+  const statut = document.getElementById('statut-pdf');
   const element = document.getElementById('zone-newsletter');
   if (element.style.display === 'none') {
-    alert('Importez d\'abord des données (Excel ou data.json) avant d\'exporter en PDF.');
+    alert("Importez d'abord des données (Excel ou data.json) avant d'exporter en PDF.");
     return;
   }
-  const opt = {
-    margin: 0,
-    filename: 'lettre-drane.pdf',
-    image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { scale: 2, useCORS: true },
-    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-  };
-  html2pdf().set(opt).from(element).save();
+
+  btn.disabled = true;
+  statut.textContent = 'Génération en cours…';
+
+  try {
+    await attendreImages(element);
+    await new Promise(r => setTimeout(r, 150));
+
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF('p', 'pt', 'a4');
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+
+    const canvas = await html2canvas(element, {
+      scale: 2,
+      useCORS: true,
+      allowTaint: false,
+      backgroundColor: '#ffffff',
+      windowWidth: element.scrollWidth,
+      windowHeight: element.scrollHeight
+    });
+
+    const imgData = canvas.toDataURL('image/jpeg', 0.95);
+    const imgWidthPt = pageWidth;
+    const imgHeightPt = (canvas.height * imgWidthPt) / canvas.width;
+
+    let heightLeft = imgHeightPt;
+    let position = 0;
+    let pageIndex = 0;
+
+    while (heightLeft > 0) {
+      if (pageIndex > 0) pdf.addPage();
+      pdf.addImage(imgData, 'JPEG', 0, position, imgWidthPt, imgHeightPt, undefined, 'FAST');
+      heightLeft -= pageHeight;
+      position -= pageHeight;
+      pageIndex++;
+    }
+
+    const scaleRatio = imgWidthPt / element.scrollWidth;
+    const liens = element.querySelectorAll('a[href]');
+    liens.forEach(lien => {
+      const rect = lien.getBoundingClientRect();
+      const elRect = element.getBoundingClientRect();
+      const x = (rect.left - elRect.left) * scaleRatio;
+      const yAbsolute = (rect.top - elRect.top) * scaleRatio;
+      const w = rect.width * scaleRatio;
+      const h = rect.height * scaleRatio;
+      const pageNum = Math.floor(yAbsolute / pageHeight);
+      const yOnPage = yAbsolute - (pageNum * pageHeight);
+      pdf.setPage(pageNum + 1);
+      pdf.link(x, yOnPage, w, h, { url: lien.href });
+    });
+
+    pdf.save('lettre-drane.pdf');
+    statut.textContent = 'PDF généré ✓';
+  } catch (err) {
+    console.error(err);
+    statut.textContent = 'Erreur lors de la génération';
+    alert("Une erreur est survenue pendant la génération du PDF : " + err.message);
+  } finally {
+    btn.disabled = false;
+    setTimeout(() => { statut.textContent = ''; }, 3000);
+  }
 });
 </script>
 
