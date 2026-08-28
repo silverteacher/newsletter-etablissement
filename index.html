@@ -5,8 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>La lettre de la DRANE</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
   :root {
     --violet: #6d4aa8;
@@ -59,7 +57,6 @@
     border: 2px solid var(--violet);
   }
   .btn:hover { opacity: 0.85; }
-  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
   input[type="file"] { display: none; }
 
   .filtres {
@@ -99,10 +96,17 @@
     justify-content: space-between;
     align-items: center;
     gap: 16px;
+    min-height: 40px;
   }
   .en-tete-logos img {
     height: 56px;
+    max-width: 220px;
     object-fit: contain;
+  }
+  .logo-manquant {
+    font-size: 11px;
+    color: #bbb;
+    font-style: italic;
   }
   .en-tete {
     background: var(--violet-fonce);
@@ -120,11 +124,17 @@
   }
   .en-tete h2 {
     margin: 0;
-    font-size: 24px;
+    font-size: 28px;
     line-height: 1.3;
   }
+  .en-tete .sous-titre {
+    margin: 6px 0 0 0;
+    font-size: 16px;
+    font-weight: normal;
+    color: #f0e8fb;
+  }
   .en-tete .date-edition {
-    margin-top: 8px;
+    margin-top: 10px;
     font-size: 13px;
     color: #e6d9f7;
   }
@@ -198,6 +208,7 @@
     border-left: 5px solid var(--violet);
     display: flex;
     flex-direction: column;
+    break-inside: avoid;
   }
   .carte.masque { display: none; }
   .tags-publics {
@@ -248,14 +259,23 @@
     color: #888;
     padding: 40px;
   }
-  #statut-pdf {
-    font-size: 12px;
-    color: #888;
-    margin-left: 4px;
+  .aide-pdf {
+    max-width: 700px;
+    margin: 0 auto 16px auto;
+    padding: 12px 20px;
+    background: #f0e8fb;
+    border: 1px solid #d9c8f2;
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--violet-fonce);
+    display: none;
   }
   @media print {
-    .barre-outils, .filtres { display: none; }
-    #zone-newsletter { box-shadow: none; margin: 0; }
+    .barre-outils, .filtres, .aide-pdf, #zone-vide { display: none !important; }
+    body { background: #fff; }
+    #zone-newsletter { box-shadow: none; margin: 0; max-width: 100%; }
+    .carte, .evenement, .categorie-titre { break-inside: avoid; }
+    a { color: var(--violet-fonce) !important; text-decoration: underline !important; }
   }
 </style>
 </head>
@@ -266,8 +286,11 @@
   <label class="btn secondaire" for="fichier-excel">📂 Importer Excel (.xlsx)</label>
   <input type="file" id="fichier-excel" accept=".xlsx,.xls" />
   <button class="btn secondaire" id="btn-json">📄 Utiliser data.json</button>
-  <button class="btn" id="btn-pdf">⬇️ Exporter en PDF</button>
-  <span id="statut-pdf"></span>
+  <button class="btn" id="btn-pdf">🖨️ Exporter en PDF</button>
+</div>
+
+<div class="aide-pdf" id="aide-pdf">
+  💡 Dans la fenêtre d'impression : choisissez <strong>« Enregistrer au format PDF »</strong> comme destination, activez <strong>« Graphiques d'arrière-plan »</strong>, puis validez. Les liens restent cliquables dans le PDF obtenu.
 </div>
 
 <div class="filtres" id="zone-filtres" style="display:none;">
@@ -282,13 +305,14 @@
 </div>
 
 <div id="zone-newsletter" style="display:none;">
-  <div class="en-tete-logos">
-    <img id="logo-drane" src="logo_drane.png" alt="DRANE Hauts-de-France" crossorigin="anonymous" onerror="this.style.display='none'" />
-    <img id="logo-academie" src="logo_academie_lille.png" alt="Académie de Lille" crossorigin="anonymous" onerror="this.style.display='none'" />
+  <div class="en-tete-logos" id="conteneur-logos">
+    <img id="logo-drane" src="logo_drane.jpg" alt="DRANE Hauts-de-France" />
+    <img id="logo-academie" src="logo_academie_lille.jpg" alt="Académie de Lille" />
   </div>
   <div class="en-tete">
     <p class="surtitre" id="v-nom-newsletter"></p>
     <h2 id="v-titre-edition"></h2>
+    <p class="sous-titre" id="v-sous-titre-edition"></p>
     <p class="date-edition" id="v-date-edition"></p>
   </div>
   <div class="intro" id="v-texte-intro"></div>
@@ -305,22 +329,33 @@
 </div>
 
 <script>
-let donneesActuelles = null;
 let filtrePublicActif = 'tous';
 
 function slugPublic(p) {
   return p.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 }
 
+function gererErreurLogo(img) {
+  img.addEventListener('error', function() {
+    const span = document.createElement('span');
+    span.className = 'logo-manquant';
+    span.textContent = '[' + (img.alt || 'logo') + ' introuvable — vérifiez le nom du fichier ' + img.getAttribute('src') + ' dans le dépôt]';
+    img.replaceWith(span);
+  }, { once: true });
+}
+gererErreurLogo(document.getElementById('logo-drane'));
+gererErreurLogo(document.getElementById('logo-academie'));
+
 function rendreNewsletter(data) {
-  donneesActuelles = data;
   document.getElementById('zone-vide').style.display = 'none';
   document.getElementById('zone-newsletter').style.display = 'block';
   document.getElementById('zone-filtres').style.display = 'flex';
+  document.getElementById('aide-pdf').style.display = 'block';
 
   const c = data.contenu;
   document.getElementById('v-nom-newsletter').textContent = c.nom_newsletter || '';
-  document.getElementById('v-titre-edition').textContent = c.titre_edition || '';
+  document.getElementById('v-titre-edition').textContent = c.titre_edition || c.titre_newsletter || 'La lettre de la DRANE';
+  document.getElementById('v-sous-titre-edition').textContent = c.sous_titre_edition || '';
   document.getElementById('v-date-edition').textContent = c.date_edition || '';
   document.getElementById('v-texte-intro').textContent = c.texte_intro || '';
   const emailEl = document.getElementById('v-email-contact');
@@ -380,7 +415,7 @@ function rendreNewsletter(data) {
         <div class="tags-publics">${tagsHtml}</div>
         <h3>${art.titre || ''}</h3>
         <p>${art.description || ''}</p>
-        <a href="${art.lien_url || '#'}" target="_blank">${art.lien_texte || 'En savoir plus'} →</a>`;
+        <a href="${art.lien_url || '#'}" target="_blank" rel="noopener">${art.lien_texte || 'En savoir plus'} →</a>`;
       grille.appendChild(div);
     });
 
@@ -397,11 +432,7 @@ function appliquerFiltre() {
       carte.classList.remove('masque');
     } else {
       const publics = (carte.dataset.publics || '').split(',');
-      if (publics.includes(filtrePublicActif)) {
-        carte.classList.remove('masque');
-      } else {
-        carte.classList.add('masque');
-      }
+      carte.classList.toggle('masque', !publics.includes(filtrePublicActif));
     }
   });
 
@@ -430,7 +461,7 @@ function excelVersJSON(workbook) {
   const articlesRaw = feuille('Articles');
   const articles = articlesRaw.map(a => ({
     ...a,
-    publics: (a.publics || '').split(',').map(s => s.trim()).filter(Boolean)
+    publics: (a.publics || a.public_cible || '').split(',').map(s => s.trim()).filter(Boolean)
   }));
   const evenements = feuille('Evenements');
   return { contenu, articles, evenements };
@@ -456,90 +487,12 @@ document.getElementById('btn-json').addEventListener('click', function() {
     .catch(err => alert('Impossible de charger data.json : ' + err));
 });
 
-function attendreImages(container) {
-  const imgs = Array.from(container.querySelectorAll('img')).filter(img => img.style.display !== 'none');
-  const promesses = imgs.map(img => {
-    if (img.complete && img.naturalWidth > 0) return Promise.resolve();
-    return new Promise(resolve => {
-      img.addEventListener('load', resolve, { once: true });
-      img.addEventListener('error', resolve, { once: true });
-      setTimeout(resolve, 3000);
-    });
-  });
-  return Promise.all(promesses);
-}
-
-document.getElementById('btn-pdf').addEventListener('click', async function() {
-  const btn = this;
-  const statut = document.getElementById('statut-pdf');
-  const element = document.getElementById('zone-newsletter');
-  if (element.style.display === 'none') {
+document.getElementById('btn-pdf').addEventListener('click', function() {
+  if (document.getElementById('zone-newsletter').style.display === 'none') {
     alert("Importez d'abord des données (Excel ou data.json) avant d'exporter en PDF.");
     return;
   }
-
-  btn.disabled = true;
-  statut.textContent = 'Génération en cours…';
-
-  try {
-    await attendreImages(element);
-    await new Promise(r => setTimeout(r, 150));
-
-    const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF('p', 'pt', 'a4');
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    const pageHeight = pdf.internal.pageSize.getHeight();
-
-    const canvas = await html2canvas(element, {
-      scale: 2,
-      useCORS: true,
-      allowTaint: false,
-      backgroundColor: '#ffffff',
-      windowWidth: element.scrollWidth,
-      windowHeight: element.scrollHeight
-    });
-
-    const imgData = canvas.toDataURL('image/jpeg', 0.95);
-    const imgWidthPt = pageWidth;
-    const imgHeightPt = (canvas.height * imgWidthPt) / canvas.width;
-
-    let heightLeft = imgHeightPt;
-    let position = 0;
-    let pageIndex = 0;
-
-    while (heightLeft > 0) {
-      if (pageIndex > 0) pdf.addPage();
-      pdf.addImage(imgData, 'JPEG', 0, position, imgWidthPt, imgHeightPt, undefined, 'FAST');
-      heightLeft -= pageHeight;
-      position -= pageHeight;
-      pageIndex++;
-    }
-
-    const scaleRatio = imgWidthPt / element.scrollWidth;
-    const liens = element.querySelectorAll('a[href]');
-    liens.forEach(lien => {
-      const rect = lien.getBoundingClientRect();
-      const elRect = element.getBoundingClientRect();
-      const x = (rect.left - elRect.left) * scaleRatio;
-      const yAbsolute = (rect.top - elRect.top) * scaleRatio;
-      const w = rect.width * scaleRatio;
-      const h = rect.height * scaleRatio;
-      const pageNum = Math.floor(yAbsolute / pageHeight);
-      const yOnPage = yAbsolute - (pageNum * pageHeight);
-      pdf.setPage(pageNum + 1);
-      pdf.link(x, yOnPage, w, h, { url: lien.href });
-    });
-
-    pdf.save('lettre-drane.pdf');
-    statut.textContent = 'PDF généré ✓';
-  } catch (err) {
-    console.error(err);
-    statut.textContent = 'Erreur lors de la génération';
-    alert("Une erreur est survenue pendant la génération du PDF : " + err.message);
-  } finally {
-    btn.disabled = false;
-    setTimeout(() => { statut.textContent = ''; }, 3000);
-  }
+  window.print();
 });
 </script>
 
