@@ -1,1 +1,22 @@
-PLACEHOLDER
+{
+  "contenu": {
+    "titre_newsletter": "La lettre du numérique éducatif",
+    "nom_newsletter": "INFOLETTRE ÉDUCATION NUMÉRIQUE",
+    "date_edition": "Rentrée 2026-2027",
+    "titre_edition": "Quoi de neuf dans le numérique éducatif ?",
+    "nom_etablissement": "Mon Établissement",
+    "adresse_etablissement": "La Madeleine, Hauts-de-France",
+    "email_contact": "contact@etablissement.fr",
+    "texte_intro": "Retrouvez toute l'actualité du numérique éducatif de cette rentrée : concours, cybersécurité, ressources pour les familles et les élèves."
+  },
+  "evenements": [
+    {"mois": "SEPT", "jour": "14", "titre": "Ouverture des inscriptions CTF", "description": "Inscriptions des équipes par les enseignants pour le challenge Passe ton Hack d'Abord."},
+    {"mois": "OCT", "jour": "16", "titre": "Fin du Temps Fort Cybersécurité", "description": "Clôture du temps fort cybersécurité sur l'ENT, dans le cadre du Cybermois."}
+  ],
+  "articles": [
+    {"categorie": "Compétences numériques", "public_cible": "Enseignants & CPE", "titre": "Concours du citoyen numérique — 2e édition", "description": "Les classes réalisent une production numérique (affiche, podcast, vidéo) autour d'une démarche citoyenne. Pré-inscription ouverte dès maintenant.", "lien_texte": "S'inscrire", "lien_url": "https://exemple.fr/concours", "couleur_tag": "#2563eb"},
+    {"categorie": "Cybersécurité", "public_cible": "Établissements secondaires", "titre": "Temps Fort Cybersécurité sur l'ENT", "description": "Du 14 septembre au 16 octobre, ce temps fort sensibilise enseignants et élèves à la sécurité numérique et à la cyberhygiène.", "lien_texte": "Découvrir le Temps Fort", "lien_url": "https://exemple.fr/temps-fort", "couleur_tag": "#dc2626"},
+    {"categorie": "Familles", "public_cible": "Pour les parents", "titre": "Bienvenue dans la vie numérique — ressources pour la rentrée 2026", "description": "Guide international sur la parentalité numérique. Cinq thématiques : écrans, désinformation, IA générative, violences en ligne, réseaux sociaux.", "lien_texte": "Voir toutes les ressources", "lien_url": "https://exemple.fr/ressources-familles", "couleur_tag": "#059669"},
+    {"categorie": "Élèves", "public_cible": "13-17 ans", "titre": "Passe ton Hack d'Abord — challenge CTF", "description": "Challenge de cybersécurité (CTF) ouvert aux lycéens, de la 2nde au BTS. Inscriptions des équipes par les enseignants dès le 14 septembre.", "lien_texte": "Toutes les infos", "lien_url": "https://exemple.fr/ctf", "couleur_tag": "#7c3aed"}
+  ]
+}

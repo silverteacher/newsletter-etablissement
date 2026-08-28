@@ -1,1 +1,357 @@
-PLACEHOLDER
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Générateur de newsletter</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<style>
+  :root {
+    --bleu: #0b3d91;
+    --fond: #f2f4f6;
+    --texte: #222;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: var(--fond);
+    color: var(--texte);
+  }
+  .barre-outils {
+    background: #ffffff;
+    border-bottom: 1px solid #ddd;
+    padding: 16px 24px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+  }
+  .barre-outils h1 {
+    font-size: 16px;
+    margin: 0;
+    color: var(--bleu);
+    flex: 1;
+  }
+  .btn {
+    background: var(--bleu);
+    color: #fff;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+  }
+  .btn.secondaire {
+    background: #ffffff;
+    color: var(--bleu);
+    border: 2px solid var(--bleu);
+  }
+  .btn:hover { opacity: 0.85; }
+  input[type="file"] { display: none; }
+  #zone-newsletter {
+    max-width: 700px;
+    margin: 32px auto;
+    background: #ffffff;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  }
+  .en-tete {
+    background: var(--bleu);
+    color: #fff;
+    padding: 28px 32px;
+    text-align: center;
+  }
+  .en-tete .surtitre {
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #a9c4f5;
+    margin: 0 0 6px 0;
+  }
+  .en-tete h2 {
+    margin: 0;
+    font-size: 24px;
+    line-height: 1.3;
+  }
+  .en-tete .date-edition {
+    margin-top: 8px;
+    font-size: 13px;
+    color: #cfe0ff;
+  }
+  .intro {
+    padding: 28px 32px 8px 32px;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+  .section-titre {
+    padding: 16px 32px 8px 32px;
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--bleu);
+    border-top: 3px solid #eef1f6;
+    margin-top: 8px;
+  }
+  .grille-articles {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    padding: 8px 32px 24px 32px;
+  }
+  @media (max-width: 600px) {
+    .grille-articles { grid-template-columns: 1fr; }
+  }
+  .carte {
+    border-radius: 10px;
+    padding: 18px;
+    background: #f7f9fc;
+    border-left: 5px solid var(--bleu);
+    display: flex;
+    flex-direction: column;
+  }
+  .carte .tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #fff;
+    padding: 3px 10px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    align-self: flex-start;
+  }
+  .carte .public {
+    font-size: 12px;
+    color: #777;
+    margin: 0 0 6px 0;
+    font-style: italic;
+  }
+  .carte h3 {
+    font-size: 15px;
+    margin: 0 0 8px 0;
+    color: #111;
+  }
+  .carte p {
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: #555;
+    margin: 0 0 12px 0;
+    flex: 1;
+  }
+  .carte a {
+    font-size: 13px;
+    font-weight: bold;
+    color: var(--bleu);
+    text-decoration: none;
+  }
+  .bloc-evenements {
+    padding: 8px 32px 24px 32px;
+  }
+  .evenement {
+    display: flex;
+    gap: 16px;
+    background: #f7f9fc;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 12px;
+    align-items: center;
+  }
+  .date-badge {
+    background: var(--bleu);
+    color: #fff;
+    border-radius: 6px;
+    text-align: center;
+    min-width: 60px;
+    padding: 8px 4px;
+  }
+  .date-badge .mois {
+    font-size: 11px;
+    text-transform: uppercase;
+    font-weight: bold;
+  }
+  .date-badge .jour {
+    font-size: 20px;
+    font-weight: bold;
+  }
+  .evenement h4 {
+    margin: 0 0 4px 0;
+    font-size: 14.5px;
+  }
+  .evenement p {
+    margin: 0;
+    font-size: 13px;
+    color: #555;
+    line-height: 1.4;
+  }
+  .pied {
+    background: #f7f9fc;
+    padding: 20px 32px;
+    text-align: center;
+    font-size: 12px;
+    color: #888;
+  }
+  .pied a { color: var(--bleu); }
+  #zone-vide {
+    max-width: 700px;
+    margin: 60px auto;
+    text-align: center;
+    color: #888;
+    padding: 40px;
+  }
+  @media print {
+    .barre-outils { display: none; }
+    #zone-newsletter { box-shadow: none; margin: 0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="barre-outils">
+  <h1>Générateur de newsletter</h1>
+  <label class="btn secondaire" for="fichier-excel">📂 Importer Excel (.xlsx)</label>
+  <input type="file" id="fichier-excel" accept=".xlsx,.xls" />
+  <button class="btn secondaire" id="btn-json">📄 Utiliser data.json</button>
+  <button class="btn" id="btn-pdf">⬇️ Exporter en PDF</button>
+</div>
+
+<div id="zone-vide">
+  Importez un fichier Excel (modele_donnees.xlsx) ou cliquez sur « Utiliser data.json » pour afficher la newsletter.
+</div>
+
+<div id="zone-newsletter" style="display:none;">
+  <div class="en-tete">
+    <p class="surtitre" id="v-nom-newsletter"></p>
+    <h2 id="v-titre-edition"></h2>
+    <p class="date-edition" id="v-date-edition"></p>
+  </div>
+  <div class="intro" id="v-texte-intro"></div>
+
+  <div class="section-titre">📅 Événements à venir</div>
+  <div class="bloc-evenements" id="conteneur-evenements"></div>
+
+  <div class="section-titre">📰 Actualités</div>
+  <div class="grille-articles" id="conteneur-articles"></div>
+
+  <div class="pied">
+    <p id="v-nom-etablissement"></p>
+    <p id="v-adresse-etablissement"></p>
+    <p>Contact : <a id="v-email-contact" href="#"></a></p>
+  </div>
+</div>
+
+<script>
+const couleursTags = {
+  "Compétences numériques": "#2563eb",
+  "Cybersécurité": "#dc2626",
+  "Familles": "#059669",
+  "Élèves": "#7c3aed"
+};
+
+function rendreNewsletter(data) {
+  document.getElementById('zone-vide').style.display = 'none';
+  document.getElementById('zone-newsletter').style.display = 'block';
+
+  const c = data.contenu;
+  document.getElementById('v-nom-newsletter').textContent = c.nom_newsletter || '';
+  document.getElementById('v-titre-edition').textContent = c.titre_edition || '';
+  document.getElementById('v-date-edition').textContent = c.date_edition || '';
+  document.getElementById('v-texte-intro').textContent = c.texte_intro || '';
+  document.getElementById('v-nom-etablissement').textContent = c.nom_etablissement || '';
+  document.getElementById('v-adresse-etablissement').textContent = c.adresse_etablissement || '';
+  const emailEl = document.getElementById('v-email-contact');
+  emailEl.textContent = c.email_contact || '';
+  emailEl.href = 'mailto:' + (c.email_contact || '');
+  document.title = c.titre_newsletter || 'Newsletter';
+
+  const cEv = document.getElementById('conteneur-evenements');
+  cEv.innerHTML = '';
+  (data.evenements || []).forEach(ev => {
+    const div = document.createElement('div');
+    div.className = 'evenement';
+    div.innerHTML = `
+      <div class="date-badge">
+        <div class="mois">${ev.mois || ''}</div>
+        <div class="jour">${ev.jour || ''}</div>
+      </div>
+      <div>
+        <h4>${ev.titre || ''}</h4>
+        <p>${ev.description || ''}</p>
+      </div>`;
+    cEv.appendChild(div);
+  });
+
+  const cArt = document.getElementById('conteneur-articles');
+  cArt.innerHTML = '';
+  (data.articles || []).forEach(art => {
+    const couleur = art.couleur_tag || couleursTags[art.categorie] || '#0b3d91';
+    const div = document.createElement('div');
+    div.className = 'carte';
+    div.style.borderLeftColor = couleur;
+    div.innerHTML = `
+      <span class="tag" style="background:${couleur};">${art.categorie || ''}</span>
+      <p class="public">${art.public_cible || ''}</p>
+      <h3>${art.titre || ''}</h3>
+      <p>${art.description || ''}</p>
+      <a href="${art.lien_url || '#'}" target="_blank">${art.lien_texte || 'En savoir plus'} →</a>`;
+    cArt.appendChild(div);
+  });
+}
+
+function excelVersJSON(workbook) {
+  const feuille = (nom) => XLSX.utils.sheet_to_json(workbook.Sheets[nom] || {}, {defval:''});
+
+  const contenuRows = feuille('Contenu');
+  const contenu = {};
+  contenuRows.forEach(r => { contenu[r.Champ] = r.Valeur; });
+
+  const articles = feuille('Articles');
+  const evenements = feuille('Evenements');
+
+  return { contenu, articles, evenements };
+}
+
+document.getElementById('fichier-excel').addEventListener('change', function(e) {
+  const fichier = e.target.files[0];
+  if (!fichier) return;
+  const lecteur = new FileReader();
+  lecteur.onload = function(evt) {
+    const data = new Uint8Array(evt.target.result);
+    const workbook = XLSX.read(data, {type: 'array'});
+    const json = excelVersJSON(workbook);
+    rendreNewsletter(json);
+  };
+  lecteur.readAsArrayBuffer(fichier);
+});
+
+document.getElementById('btn-json').addEventListener('click', function() {
+  fetch('data.json')
+    .then(r => r.json())
+    .then(json => rendreNewsletter(json))
+    .catch(err => alert('Impossible de charger data.json : ' + err));
+});
+
+document.getElementById('btn-pdf').addEventListener('click', function() {
+  const element = document.getElementById('zone-newsletter');
+  if (element.style.display === 'none') {
+    alert('Importez d\'abord des données (Excel ou data.json) avant d\'exporter en PDF.');
+    return;
+  }
+  const opt = {
+    margin: 0,
+    filename: 'newsletter.pdf',
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2, useCORS: true },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+  };
+  html2pdf().set(opt).from(element).save();
+});
+</script>
+
+</body>
+</html>
