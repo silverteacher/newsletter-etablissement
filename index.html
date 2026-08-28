@@ -3,21 +3,24 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Générateur de newsletter</title>
+<title>La lettre de la DRANE</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
   :root {
-    --bleu: #0b3d91;
+    --marine: #0b3d5c;
+    --bordeaux: #a51c30;
+    --ardoise: #4a5568;
+    --cyan: #29abe2;
+    --vert: #8dc63f;
     --fond: #f2f4f6;
-    --texte: #222;
   }
   * { box-sizing: border-box; }
   body {
     margin: 0;
     font-family: Arial, Helvetica, sans-serif;
     background: var(--fond);
-    color: var(--texte);
+    color: #222;
   }
   .barre-outils {
     background: #ffffff;
@@ -35,11 +38,11 @@
   .barre-outils h1 {
     font-size: 16px;
     margin: 0;
-    color: var(--bleu);
+    color: var(--marine);
     flex: 1;
   }
   .btn {
-    background: var(--bleu);
+    background: var(--marine);
     color: #fff;
     border: none;
     padding: 10px 18px;
@@ -50,28 +53,66 @@
   }
   .btn.secondaire {
     background: #ffffff;
-    color: var(--bleu);
-    border: 2px solid var(--bleu);
+    color: var(--marine);
+    border: 2px solid var(--marine);
   }
   .btn:hover { opacity: 0.85; }
   input[type="file"] { display: none; }
+
+  .filtres {
+    max-width: 700px;
+    margin: 20px auto 0 auto;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 0 16px;
+  }
+  .filtre-tag {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: bold;
+    border: 2px solid var(--marine);
+    background: #fff;
+    color: var(--marine);
+    cursor: pointer;
+    user-select: none;
+  }
+  .filtre-tag.actif {
+    background: var(--marine);
+    color: #fff;
+  }
+
   #zone-newsletter {
     max-width: 700px;
-    margin: 32px auto;
+    margin: 20px auto 32px auto;
     background: #ffffff;
     box-shadow: 0 4px 20px rgba(0,0,0,0.08);
   }
+  .en-tete-logos {
+    background: #ffffff;
+    padding: 20px 32px 0 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+  }
+  .en-tete-logos img {
+    height: 56px;
+    object-fit: contain;
+  }
   .en-tete {
-    background: var(--bleu);
+    background: var(--marine);
     color: #fff;
-    padding: 28px 32px;
+    padding: 24px 32px 28px 32px;
     text-align: center;
+    margin-top: 16px;
   }
   .en-tete .surtitre {
-    font-size: 12px;
-    letter-spacing: 1.5px;
+    font-size: 11.5px;
+    letter-spacing: 1px;
     text-transform: uppercase;
-    color: #a9c4f5;
+    color: #a9d4ea;
     margin: 0 0 6px 0;
   }
   .en-tete h2 {
@@ -82,7 +123,7 @@
   .en-tete .date-edition {
     margin-top: 8px;
     font-size: 13px;
-    color: #cfe0ff;
+    color: #cfe8f7;
   }
   .intro {
     padding: 28px 32px 8px 32px;
@@ -93,62 +134,9 @@
     padding: 16px 32px 8px 32px;
     font-size: 18px;
     font-weight: bold;
-    color: var(--bleu);
+    color: var(--marine);
     border-top: 3px solid #eef1f6;
     margin-top: 8px;
-  }
-  .grille-articles {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    padding: 8px 32px 24px 32px;
-  }
-  @media (max-width: 600px) {
-    .grille-articles { grid-template-columns: 1fr; }
-  }
-  .carte {
-    border-radius: 10px;
-    padding: 18px;
-    background: #f7f9fc;
-    border-left: 5px solid var(--bleu);
-    display: flex;
-    flex-direction: column;
-  }
-  .carte .tag {
-    display: inline-block;
-    font-size: 11px;
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: #fff;
-    padding: 3px 10px;
-    border-radius: 12px;
-    margin-bottom: 8px;
-    align-self: flex-start;
-  }
-  .carte .public {
-    font-size: 12px;
-    color: #777;
-    margin: 0 0 6px 0;
-    font-style: italic;
-  }
-  .carte h3 {
-    font-size: 15px;
-    margin: 0 0 8px 0;
-    color: #111;
-  }
-  .carte p {
-    font-size: 13.5px;
-    line-height: 1.5;
-    color: #555;
-    margin: 0 0 12px 0;
-    flex: 1;
-  }
-  .carte a {
-    font-size: 13px;
-    font-weight: bold;
-    color: var(--bleu);
-    text-decoration: none;
   }
   .bloc-evenements {
     padding: 8px 32px 24px 32px;
@@ -163,7 +151,7 @@
     align-items: center;
   }
   .date-badge {
-    background: var(--bleu);
+    background: var(--marine);
     color: #fff;
     border-radius: 6px;
     text-align: center;
@@ -179,15 +167,68 @@
     font-size: 20px;
     font-weight: bold;
   }
-  .evenement h4 {
-    margin: 0 0 4px 0;
-    font-size: 14.5px;
+  .evenement h4 { margin: 0 0 4px 0; font-size: 14.5px; }
+  .evenement p { margin: 0; font-size: 13px; color: #555; line-height: 1.4; }
+
+  .categorie-bloc { padding: 8px 32px 8px 32px; }
+  .categorie-titre {
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--ardoise);
+    margin: 20px 0 10px 0;
+    padding-bottom: 6px;
+    border-bottom: 2px solid #eef1f6;
   }
-  .evenement p {
-    margin: 0;
-    font-size: 13px;
+  .grille-articles {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 600px) {
+    .grille-articles { grid-template-columns: 1fr; }
+    .en-tete-logos { flex-wrap: wrap; }
+  }
+  .carte {
+    border-radius: 10px;
+    padding: 18px;
+    background: #f7f9fc;
+    border-left: 5px solid var(--marine);
+    display: flex;
+    flex-direction: column;
+  }
+  .carte.masque { display: none; }
+  .tags-publics {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+  }
+  .tag-public {
+    display: inline-block;
+    font-size: 10.5px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: #fff;
+    padding: 3px 9px;
+    border-radius: 12px;
+  }
+  .tag-public.enseignants { background: var(--marine); }
+  .tag-public.eleves { background: var(--cyan); }
+  .tag-public.parents { background: var(--vert); }
+  .carte h3 { font-size: 15px; margin: 0 0 8px 0; color: #111; }
+  .carte p {
+    font-size: 13.5px;
+    line-height: 1.5;
     color: #555;
-    line-height: 1.4;
+    margin: 0 0 12px 0;
+    flex: 1;
+  }
+  .carte a {
+    font-size: 13px;
+    font-weight: bold;
+    color: var(--bordeaux);
+    text-decoration: none;
   }
   .pied {
     background: #f7f9fc;
@@ -196,7 +237,7 @@
     font-size: 12px;
     color: #888;
   }
-  .pied a { color: var(--bleu); }
+  .pied a { color: var(--marine); }
   #zone-vide {
     max-width: 700px;
     margin: 60px auto;
@@ -205,7 +246,7 @@
     padding: 40px;
   }
   @media print {
-    .barre-outils { display: none; }
+    .barre-outils, .filtres { display: none; }
     #zone-newsletter { box-shadow: none; margin: 0; }
   }
 </style>
@@ -213,11 +254,18 @@
 <body>
 
 <div class="barre-outils">
-  <h1>Générateur de newsletter</h1>
+  <h1>La lettre de la DRANE — Générateur</h1>
   <label class="btn secondaire" for="fichier-excel">📂 Importer Excel (.xlsx)</label>
   <input type="file" id="fichier-excel" accept=".xlsx,.xls" />
   <button class="btn secondaire" id="btn-json">📄 Utiliser data.json</button>
   <button class="btn" id="btn-pdf">⬇️ Exporter en PDF</button>
+</div>
+
+<div class="filtres" id="zone-filtres" style="display:none;">
+  <span class="filtre-tag actif" data-public="tous">Tous</span>
+  <span class="filtre-tag" data-public="Enseignants">Enseignants</span>
+  <span class="filtre-tag" data-public="Élèves">Élèves</span>
+  <span class="filtre-tag" data-public="Parents">Parents</span>
 </div>
 
 <div id="zone-vide">
@@ -225,6 +273,10 @@
 </div>
 
 <div id="zone-newsletter" style="display:none;">
+  <div class="en-tete-logos">
+    <img src="logo_drane.png" alt="DRANE Hauts-de-France" onerror="this.style.display='none'" />
+    <img src="logo_academie_lille.png" alt="Académie de Lille" onerror="this.style.display='none'" />
+  </div>
   <div class="en-tete">
     <p class="surtitre" id="v-nom-newsletter"></p>
     <h2 id="v-titre-edition"></h2>
@@ -235,39 +287,37 @@
   <div class="section-titre">📅 Événements à venir</div>
   <div class="bloc-evenements" id="conteneur-evenements"></div>
 
-  <div class="section-titre">📰 Actualités</div>
-  <div class="grille-articles" id="conteneur-articles"></div>
+  <div class="categorie-bloc" id="conteneur-categories"></div>
 
   <div class="pied">
-    <p id="v-nom-etablissement"></p>
-    <p id="v-adresse-etablissement"></p>
+    <p>Délégation de région académique au numérique éducatif — Hauts-de-France</p>
     <p>Contact : <a id="v-email-contact" href="#"></a></p>
   </div>
 </div>
 
 <script>
-const couleursTags = {
-  "Compétences numériques": "#2563eb",
-  "Cybersécurité": "#dc2626",
-  "Familles": "#059669",
-  "Élèves": "#7c3aed"
-};
+let donneesActuelles = null;
+let filtrePublicActif = 'tous';
+
+function slugPublic(p) {
+  return p.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+}
 
 function rendreNewsletter(data) {
+  donneesActuelles = data;
   document.getElementById('zone-vide').style.display = 'none';
   document.getElementById('zone-newsletter').style.display = 'block';
+  document.getElementById('zone-filtres').style.display = 'flex';
 
   const c = data.contenu;
   document.getElementById('v-nom-newsletter').textContent = c.nom_newsletter || '';
   document.getElementById('v-titre-edition').textContent = c.titre_edition || '';
   document.getElementById('v-date-edition').textContent = c.date_edition || '';
   document.getElementById('v-texte-intro').textContent = c.texte_intro || '';
-  document.getElementById('v-nom-etablissement').textContent = c.nom_etablissement || '';
-  document.getElementById('v-adresse-etablissement').textContent = c.adresse_etablissement || '';
   const emailEl = document.getElementById('v-email-contact');
   emailEl.textContent = c.email_contact || '';
   emailEl.href = 'mailto:' + (c.email_contact || '');
-  document.title = c.titre_newsletter || 'Newsletter';
+  document.title = c.titre_newsletter || 'La lettre de la DRANE';
 
   const cEv = document.getElementById('conteneur-evenements');
   cEv.innerHTML = '';
@@ -286,22 +336,82 @@ function rendreNewsletter(data) {
     cEv.appendChild(div);
   });
 
-  const cArt = document.getElementById('conteneur-articles');
-  cArt.innerHTML = '';
+  const cCat = document.getElementById('conteneur-categories');
+  cCat.innerHTML = '';
+  const categories = {};
   (data.articles || []).forEach(art => {
-    const couleur = art.couleur_tag || couleursTags[art.categorie] || '#0b3d91';
-    const div = document.createElement('div');
-    div.className = 'carte';
-    div.style.borderLeftColor = couleur;
-    div.innerHTML = `
-      <span class="tag" style="background:${couleur};">${art.categorie || ''}</span>
-      <p class="public">${art.public_cible || ''}</p>
-      <h3>${art.titre || ''}</h3>
-      <p>${art.description || ''}</p>
-      <a href="${art.lien_url || '#'}" target="_blank">${art.lien_texte || 'En savoir plus'} →</a>`;
-    cArt.appendChild(div);
+    const cat = art.categorie || 'Autre';
+    if (!categories[cat]) categories[cat] = [];
+    categories[cat].push(art);
+  });
+
+  Object.keys(categories).forEach(cat => {
+    const titreCat = document.createElement('div');
+    titreCat.className = 'categorie-titre';
+    titreCat.textContent = cat;
+    cCat.appendChild(titreCat);
+
+    const grille = document.createElement('div');
+    grille.className = 'grille-articles';
+
+    categories[cat].forEach(art => {
+      const couleur = art.couleur_tag || '#0b3d5c';
+      const publics = art.publics || (art.public_cible ? [art.public_cible] : []);
+      const div = document.createElement('div');
+      div.className = 'carte';
+      div.dataset.publics = publics.join(',');
+      div.style.borderLeftColor = couleur;
+
+      const tagsHtml = publics.map(p => {
+        const slug = slugPublic(p);
+        return `<span class="tag-public ${slug}">${p}</span>`;
+      }).join('');
+
+      div.innerHTML = `
+        <div class="tags-publics">${tagsHtml}</div>
+        <h3>${art.titre || ''}</h3>
+        <p>${art.description || ''}</p>
+        <a href="${art.lien_url || '#'}" target="_blank">${art.lien_texte || 'En savoir plus'} →</a>`;
+      grille.appendChild(div);
+    });
+
+    cCat.appendChild(grille);
+  });
+
+  appliquerFiltre();
+}
+
+function appliquerFiltre() {
+  const cartes = document.querySelectorAll('.carte');
+  cartes.forEach(carte => {
+    if (filtrePublicActif === 'tous') {
+      carte.classList.remove('masque');
+    } else {
+      const publics = (carte.dataset.publics || '').split(',');
+      if (publics.includes(filtrePublicActif)) {
+        carte.classList.remove('masque');
+      } else {
+        carte.classList.add('masque');
+      }
+    }
+  });
+
+  document.querySelectorAll('.categorie-titre').forEach(titre => {
+    const grille = titre.nextElementSibling;
+    const visibles = grille.querySelectorAll('.carte:not(.masque)').length;
+    titre.style.display = visibles === 0 ? 'none' : '';
+    grille.style.display = visibles === 0 ? 'none' : 'grid';
   });
 }
+
+document.querySelectorAll('.filtre-tag').forEach(tag => {
+  tag.addEventListener('click', function() {
+    document.querySelectorAll('.filtre-tag').forEach(t => t.classList.remove('actif'));
+    this.classList.add('actif');
+    filtrePublicActif = this.dataset.public;
+    appliquerFiltre();
+  });
+});
 
 function excelVersJSON(workbook) {
   const feuille = (nom) => XLSX.utils.sheet_to_json(workbook.Sheets[nom] || {}, {defval:''});
@@ -310,7 +420,12 @@ function excelVersJSON(workbook) {
   const contenu = {};
   contenuRows.forEach(r => { contenu[r.Champ] = r.Valeur; });
 
-  const articles = feuille('Articles');
+  const articlesRaw = feuille('Articles');
+  const articles = articlesRaw.map(a => ({
+    ...a,
+    publics: (a.publics || '').split(',').map(s => s.trim()).filter(Boolean)
+  }));
+
   const evenements = feuille('Evenements');
 
   return { contenu, articles, evenements };
@@ -344,7 +459,7 @@ document.getElementById('btn-pdf').addEventListener('click', function() {
   }
   const opt = {
     margin: 0,
-    filename: 'newsletter.pdf',
+    filename: 'lettre-drane.pdf',
     image: { type: 'jpeg', quality: 0.98 },
     html2canvas: { scale: 2, useCORS: true },
     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
