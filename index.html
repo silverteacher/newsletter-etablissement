@@ -162,6 +162,7 @@
     padding: 16px;
     margin-bottom: 12px;
     align-items: center;
+    break-inside: avoid;
   }
   .date-badge {
     background: var(--violet);
@@ -184,6 +185,9 @@
   .evenement p { margin: 0; font-size: 13px; color: #555; line-height: 1.4; }
 
   .categorie-bloc { padding: 8px 32px 8px 32px; }
+  .categorie-groupe {
+    break-inside: avoid-page;
+  }
   .categorie-titre {
     font-size: 16px;
     font-weight: bold;
@@ -191,6 +195,8 @@
     margin: 20px 0 10px 0;
     padding-bottom: 6px;
     border-bottom: 2px solid #eee7fa;
+    break-after: avoid-page;
+    break-inside: avoid;
   }
   .grille-articles {
     display: grid;
@@ -209,6 +215,7 @@
     display: flex;
     flex-direction: column;
     break-inside: avoid;
+    break-before: avoid;
   }
   .carte.masque { display: none; }
   .tags-publics {
@@ -250,6 +257,7 @@
     text-align: center;
     font-size: 12px;
     color: #888;
+    break-inside: avoid;
   }
   .pied a { color: var(--violet); }
   #zone-vide {
@@ -274,7 +282,10 @@
     .barre-outils, .filtres, .aide-pdf, #zone-vide { display: none !important; }
     body { background: #fff; }
     #zone-newsletter { box-shadow: none; margin: 0; max-width: 100%; }
-    .carte, .evenement, .categorie-titre { break-inside: avoid; }
+    .categorie-groupe { break-inside: avoid-page; }
+    .categorie-titre { break-after: avoid-page; break-inside: avoid; }
+    .carte, .evenement, .pied { break-inside: avoid; }
+    .grille-articles { break-before: avoid; }
     a { color: var(--violet-fonce) !important; text-decoration: underline !important; }
   }
 </style>
@@ -390,10 +401,13 @@ function rendreNewsletter(data) {
   });
 
   Object.keys(categories).forEach(cat => {
+    const groupe = document.createElement('div');
+    groupe.className = 'categorie-groupe';
+
     const titreCat = document.createElement('div');
     titreCat.className = 'categorie-titre';
     titreCat.textContent = cat;
-    cCat.appendChild(titreCat);
+    groupe.appendChild(titreCat);
 
     const grille = document.createElement('div');
     grille.className = 'grille-articles';
@@ -419,7 +433,8 @@ function rendreNewsletter(data) {
       grille.appendChild(div);
     });
 
-    cCat.appendChild(grille);
+    groupe.appendChild(grille);
+    cCat.appendChild(groupe);
   });
 
   appliquerFiltre();
@@ -436,11 +451,13 @@ function appliquerFiltre() {
     }
   });
 
-  document.querySelectorAll('.categorie-titre').forEach(titre => {
-    const grille = titre.nextElementSibling;
+  document.querySelectorAll('.categorie-groupe').forEach(groupe => {
+    const grille = groupe.querySelector('.grille-articles');
+    const titre = groupe.querySelector('.categorie-titre');
     const visibles = grille.querySelectorAll('.carte:not(.masque)').length;
     titre.style.display = visibles === 0 ? 'none' : '';
     grille.style.display = visibles === 0 ? 'none' : 'grid';
+    groupe.style.display = visibles === 0 ? 'none' : '';
   });
 }
 
