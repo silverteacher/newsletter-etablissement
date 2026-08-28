@@ -184,6 +184,9 @@
   .evenement p { margin: 0; font-size: 13px; color: #555; line-height: 1.4; }
 
   .categorie-bloc { padding: 8px 32px 8px 32px; }
+  .categorie-groupe {
+    overflow: hidden;
+  }
   .categorie-titre {
     font-size: 16px;
     font-weight: bold;
@@ -275,30 +278,44 @@
     body { background: #fff; }
     #zone-newsletter { box-shadow: none; margin: 0; max-width: 100%; }
 
-    .grille-articles {
-      display: block !important;
+    .categorie-groupe {
+      display: block;
+      overflow: visible;
+      padding-top: 1px;
+      margin-top: 24px;
     }
-    .carte {
-      display: inline-block;
-      width: 100%;
-      vertical-align: top;
-      break-inside: avoid;
-      page-break-inside: avoid;
-      margin-bottom: 16px;
+    .categorie-groupe:first-child {
+      margin-top: 0;
     }
     .categorie-titre {
+      display: block;
+      position: relative;
+      margin: 0 0 14px 0;
+      padding: 0 0 8px 0;
       break-after: avoid-page;
       page-break-after: avoid;
       break-inside: avoid;
       page-break-inside: avoid;
     }
-    .categorie-groupe {
-      break-inside: auto;
+    .grille-articles {
+      display: block !important;
+    }
+    .carte {
+      display: block;
+      width: 100%;
+      break-inside: avoid;
+      page-break-inside: avoid;
+      margin: 0 0 16px 0;
+      position: relative;
+    }
+    .carte:last-child {
+      margin-bottom: 0;
     }
     .evenement {
       break-inside: avoid;
       page-break-inside: avoid;
       display: block;
+      margin: 0 0 12px 0;
     }
     .pied {
       break-inside: avoid;
