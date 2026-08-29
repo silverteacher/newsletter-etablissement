@@ -365,8 +365,10 @@
 
   <div class="categorie-bloc" id="conteneur-categories"></div>
 
-  <div class="section-titre">📅 Événements à venir</div>
-  <div class="bloc-evenements" id="conteneur-evenements"></div>
+  <div id="bloc-section-evenements">
+    <div class="section-titre">📅 Événements à venir</div>
+    <div class="bloc-evenements" id="conteneur-evenements"></div>
+  </div>
 
   <div class="pied">
     <p>Délégation de région académique au numérique éducatif — Hauts-de-France</p>
@@ -392,6 +394,12 @@ function gererErreurLogo(img) {
 gererErreurLogo(document.getElementById('logo-drane'));
 gererErreurLogo(document.getElementById('logo-academie'));
 
+function estEvenementVide(ev) {
+  if (!ev) return true;
+  const champs = ['mois', 'jour', 'titre', 'description'];
+  return champs.every(c => !ev[c] || String(ev[c]).trim() === '');
+}
+
 function rendreNewsletter(data) {
   document.getElementById('zone-vide').style.display = 'none';
   document.getElementById('zone-newsletter').style.display = 'block';
@@ -409,22 +417,31 @@ function rendreNewsletter(data) {
   emailEl.href = 'mailto:' + (c.email_contact || '');
   document.title = c.titre_newsletter || 'La lettre de la DRANE';
 
+  const evenementsValides = (data.evenements || []).filter(ev => !estEvenementVide(ev));
+
+  const blocSectionEv = document.getElementById('bloc-section-evenements');
   const cEv = document.getElementById('conteneur-evenements');
   cEv.innerHTML = '';
-  (data.evenements || []).forEach(ev => {
-    const div = document.createElement('div');
-    div.className = 'evenement';
-    div.innerHTML = `
-      <div class="date-badge">
-        <div class="mois">${ev.mois || ''}</div>
-        <div class="jour">${ev.jour || ''}</div>
-      </div>
-      <div>
-        <h4>${ev.titre || ''}</h4>
-        <p>${ev.description || ''}</p>
-      </div>`;
-    cEv.appendChild(div);
-  });
+
+  if (evenementsValides.length === 0) {
+    blocSectionEv.style.display = 'none';
+  } else {
+    blocSectionEv.style.display = '';
+    evenementsValides.forEach(ev => {
+      const div = document.createElement('div');
+      div.className = 'evenement';
+      div.innerHTML = `
+        <div class="date-badge">
+          <div class="mois">${ev.mois || ''}</div>
+          <div class="jour">${ev.jour || ''}</div>
+        </div>
+        <div>
+          <h4>${ev.titre || ''}</h4>
+          <p>${ev.description || ''}</p>
+        </div>`;
+      cEv.appendChild(div);
+    });
+  }
 
   const cCat = document.getElementById('conteneur-categories');
   cCat.innerHTML = '';
