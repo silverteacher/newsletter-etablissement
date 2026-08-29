@@ -9,18 +9,20 @@
   :root {
     --violet: #6d4aa8;
     --violet-clair: #9b7fd4;
-    --violet-fonce: #4a2f7a;
-    --ardoise: #6b5b8a;
+    --violet-fonce: #382057;
+    --ardoise: #4a4458;
     --rose: #b57edc;
-    --vert: #7fb069;
-    --fond: #f6f4fa;
+    --vert: #6a9d63;
+    --ambre: #d99a3d;
+    --fond: #f7f5f2;
+    --encre: #241b33;
   }
   * { box-sizing: border-box; }
   body {
     margin: 0;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: 'Georgia', 'Times New Roman', serif;
     background: var(--fond);
-    color: #222;
+    color: var(--encre);
   }
   .barre-outils {
     background: #ffffff;
@@ -34,64 +36,68 @@
     top: 0;
     z-index: 100;
     box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    font-family: Arial, Helvetica, sans-serif;
   }
   .barre-outils h1 {
     font-size: 16px;
     margin: 0;
     color: var(--violet-fonce);
     flex: 1;
+    font-family: Arial, Helvetica, sans-serif;
   }
   .btn {
-    background: var(--violet);
+    background: var(--violet-fonce);
     color: #fff;
     border: none;
     padding: 10px 18px;
-    border-radius: 6px;
+    border-radius: 4px;
     cursor: pointer;
     font-size: 14px;
     font-weight: bold;
+    font-family: Arial, Helvetica, sans-serif;
   }
   .btn.secondaire {
     background: #ffffff;
-    color: var(--violet);
-    border: 2px solid var(--violet);
+    color: var(--violet-fonce);
+    border: 2px solid var(--violet-fonce);
   }
   .btn:hover { opacity: 0.85; }
   input[type="file"] { display: none; }
 
   .filtres {
-    max-width: 700px;
+    max-width: 720px;
     margin: 20px auto 0 auto;
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
     padding: 0 16px;
+    font-family: Arial, Helvetica, sans-serif;
   }
   .filtre-tag {
     padding: 6px 14px;
     border-radius: 20px;
     font-size: 13px;
     font-weight: bold;
-    border: 2px solid var(--violet);
+    border: 2px solid var(--violet-fonce);
     background: #fff;
-    color: var(--violet);
+    color: var(--violet-fonce);
     cursor: pointer;
     user-select: none;
   }
   .filtre-tag.actif {
-    background: var(--violet);
+    background: var(--violet-fonce);
     color: #fff;
   }
 
   #zone-newsletter {
-    max-width: 700px;
+    max-width: 720px;
     margin: 20px auto 32px auto;
     background: #ffffff;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    box-shadow: 0 8px 30px rgba(36,27,51,0.12);
   }
   .en-tete-logos {
     background: #ffffff;
-    padding: 20px 32px 0 32px;
+    padding: 22px 40px 0 40px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -99,50 +105,92 @@
     min-height: 40px;
   }
   .en-tete-logos img {
-    height: 56px;
-    max-width: 220px;
+    height: 52px;
+    max-width: 200px;
     object-fit: contain;
   }
   .logo-manquant {
     font-size: 11px;
     color: #bbb;
     font-style: italic;
+    font-family: Arial, Helvetica, sans-serif;
   }
+
   .en-tete {
+    position: relative;
     background: var(--violet-fonce);
     color: #fff;
-    padding: 24px 32px 28px 32px;
-    text-align: center;
-    margin-top: 16px;
+    padding: 30px 40px 46px 40px;
+    margin-top: 18px;
+    overflow: hidden;
+  }
+  .en-tete::before {
+    content: "";
+    position: absolute;
+    top: 0; right: 0;
+    width: 55%;
+    height: 100%;
+    background: linear-gradient(135deg, transparent 45%, rgba(217,154,61,0.18) 45%, rgba(217,154,61,0.18) 55%, transparent 55%);
+  }
+  .en-tete::after {
+    content: "";
+    position: absolute;
+    left: 0; bottom: 0;
+    width: 60px;
+    height: 6px;
+    background: var(--ambre);
   }
   .en-tete .surtitre {
-    font-size: 11.5px;
-    letter-spacing: 1px;
+    position: relative;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 11px;
+    letter-spacing: 2.5px;
     text-transform: uppercase;
-    color: #d9c8f2;
-    margin: 0 0 6px 0;
+    color: var(--ambre);
+    margin: 0 0 10px 0;
+    font-weight: bold;
   }
   .en-tete h2 {
+    position: relative;
     margin: 0;
-    font-size: 28px;
-    line-height: 1.3;
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 34px;
+    line-height: 1.15;
+    font-weight: normal;
+    letter-spacing: -0.3px;
+    max-width: 80%;
   }
   .en-tete .sous-titre {
-    margin: 6px 0 0 0;
+    position: relative;
+    margin: 10px 0 0 0;
+    font-family: Georgia, serif;
     font-size: 16px;
+    font-style: italic;
     font-weight: normal;
-    color: #f0e8fb;
+    color: #d9c8f2;
+    max-width: 75%;
   }
   .en-tete .date-edition {
-    margin-top: 10px;
-    font-size: 13px;
-    color: #e6d9f7;
+    position: relative;
+    margin-top: 18px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 11.5px;
+    letter-spacing: 0.5px;
+    color: #b7a4dd;
   }
+
   .intro {
-    padding: 28px 32px 8px 32px;
-    font-size: 15px;
-    line-height: 1.6;
+    padding: 32px 40px 6px 40px;
+    font-family: Georgia, serif;
+    font-size: 16px;
+    line-height: 1.65;
+    color: #3a3245;
+    border-left: 3px solid var(--ambre);
+    margin: 26px 40px 0 40px;
+    padding-left: 22px;
+    padding-right: 0;
   }
+
   .section-titre {
     padding: 16px 32px 8px 32px;
     font-size: 18px;
@@ -150,119 +198,174 @@
     color: var(--violet-fonce);
     border-top: 3px solid #eee7fa;
     margin-top: 8px;
+    font-family: Georgia, serif;
   }
   .bloc-evenements {
-    padding: 8px 32px 24px 32px;
+    padding: 8px 40px 30px 40px;
   }
   .evenement {
     display: flex;
-    gap: 16px;
-    background: #f6f2fc;
-    border-radius: 8px;
-    padding: 16px;
-    margin-bottom: 12px;
+    gap: 18px;
+    background: #faf8f5;
+    border-radius: 2px;
+    padding: 16px 18px;
+    margin-bottom: 10px;
     align-items: center;
+    border-left: 3px solid var(--ambre);
   }
   .date-badge {
-    background: var(--violet);
+    background: var(--violet-fonce);
     color: #fff;
-    border-radius: 6px;
+    border-radius: 2px;
     text-align: center;
-    min-width: 60px;
+    min-width: 58px;
     padding: 8px 4px;
+    font-family: Arial, Helvetica, sans-serif;
   }
   .date-badge .mois {
-    font-size: 11px;
+    font-size: 10.5px;
     text-transform: uppercase;
     font-weight: bold;
+    letter-spacing: 0.5px;
   }
   .date-badge .jour {
     font-size: 20px;
     font-weight: bold;
   }
-  .evenement h4 { margin: 0 0 4px 0; font-size: 14.5px; }
-  .evenement p { margin: 0; font-size: 13px; color: #555; line-height: 1.4; }
+  .evenement h4 { margin: 0 0 4px 0; font-size: 14.5px; font-family: Georgia, serif; }
+  .evenement p { margin: 0; font-size: 13px; color: #5c5568; line-height: 1.4; font-family: Arial, Helvetica, sans-serif; }
 
-  .categorie-bloc { padding: 8px 32px 8px 32px; }
+  .categorie-bloc { padding: 10px 40px 8px 40px; }
   .categorie-groupe {
     overflow: hidden;
+    position: relative;
   }
   .categorie-titre {
-    font-size: 16px;
+    position: relative;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 13px;
     font-weight: bold;
-    color: var(--ardoise);
-    margin: 20px 0 10px 0;
-    padding-bottom: 6px;
-    border-bottom: 2px solid #eee7fa;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    color: var(--violet-fonce);
+    margin: 34px 0 18px 0;
+    padding-bottom: 12px;
+    padding-left: 52px;
+    min-height: 34px;
+    display: flex;
+    align-items: center;
+  }
+  .categorie-titre::before {
+    content: attr(data-num);
+    position: absolute;
+    left: 0;
+    top: -8px;
+    font-family: Georgia, serif;
+    font-size: 40px;
+    font-weight: bold;
+    color: #ede6f7;
+    line-height: 1;
+    z-index: 0;
+  }
+  .categorie-titre::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(to right, var(--ambre) 40px, #eee7fa 40px);
   }
   .grille-articles {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 16px;
+    gap: 18px;
   }
   @media (max-width: 600px) {
     .grille-articles { grid-template-columns: 1fr; }
     .en-tete-logos { flex-wrap: wrap; }
+    .en-tete h2, .en-tete .sous-titre { max-width: 100%; }
+    .intro { margin: 20px 16px 0 16px; }
   }
   .carte {
-    border-radius: 10px;
-    padding: 18px;
-    background: #f6f2fc;
-    border-left: 5px solid var(--violet);
+    border-radius: 2px;
+    padding: 20px 20px 18px 20px;
+    background: #faf8f5;
+    border-top: 3px solid var(--violet-clair);
     display: flex;
     flex-direction: column;
+    position: relative;
   }
   .carte.masque { display: none; }
   .tags-publics {
     display: flex;
     gap: 6px;
     flex-wrap: wrap;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
+    font-family: Arial, Helvetica, sans-serif;
   }
   .tag-public {
     display: inline-block;
-    font-size: 10.5px;
+    font-size: 9.5px;
     font-weight: bold;
     text-transform: uppercase;
-    letter-spacing: 0.4px;
+    letter-spacing: 0.6px;
     color: #fff;
     padding: 3px 9px;
-    border-radius: 12px;
+    border-radius: 2px;
   }
   .tag-public.enseignants { background: var(--violet-fonce); }
   .tag-public.eleves { background: var(--rose); }
   .tag-public.parents { background: var(--vert); }
-  .carte h3 { font-size: 15px; margin: 0 0 8px 0; color: #111; }
+  .carte h3 {
+    font-family: Georgia, serif;
+    font-size: 16.5px;
+    font-weight: bold;
+    margin: 0 0 10px 0;
+    color: var(--encre);
+    line-height: 1.3;
+  }
   .carte p {
-    font-size: 13.5px;
-    line-height: 1.5;
-    color: #555;
-    margin: 0 0 12px 0;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 13px;
+    line-height: 1.55;
+    color: #5c5568;
+    margin: 0 0 14px 0;
     flex: 1;
   }
   .carte a {
-    font-size: 13px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12.5px;
     font-weight: bold;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
     color: var(--violet-fonce);
     text-decoration: none;
+    border-bottom: 2px solid var(--ambre);
+    padding-bottom: 2px;
+    align-self: flex-start;
   }
   .pied {
-    background: #f6f2fc;
-    padding: 20px 32px;
+    background: var(--violet-fonce);
+    color: #cbb9e6;
+    padding: 26px 40px;
     text-align: center;
     font-size: 12px;
-    color: #888;
+    font-family: Arial, Helvetica, sans-serif;
+    margin-top: 20px;
   }
-  .pied a { color: var(--violet); }
+  .pied p { margin: 0 0 6px 0; }
+  .pied a { color: var(--ambre); text-decoration: none; font-weight: bold; }
   #zone-vide {
     max-width: 700px;
     margin: 60px auto;
     text-align: center;
     color: #888;
     padding: 40px;
+    font-family: Arial, Helvetica, sans-serif;
   }
   .aide-pdf {
-    max-width: 700px;
+    max-width: 720px;
     margin: 0 auto 16px auto;
     padding: 12px 20px;
     background: #f0e8fb;
@@ -271,6 +374,7 @@
     font-size: 13px;
     color: var(--violet-fonce);
     display: none;
+    font-family: Arial, Helvetica, sans-serif;
   }
 
   @media print {
@@ -288,10 +392,10 @@
       margin-top: 0;
     }
     .categorie-titre {
-      display: block;
+      display: flex;
       position: relative;
-      margin: 0 0 14px 0;
-      padding: 0 0 8px 0;
+      margin: 0 0 18px 0;
+      padding-bottom: 12px;
       break-after: avoid-page;
       page-break-after: avoid;
       break-inside: avoid;
@@ -321,7 +425,8 @@
       break-inside: avoid;
       page-break-inside: avoid;
     }
-    a { color: var(--violet-fonce) !important; text-decoration: underline !important; }
+    a { color: var(--violet-fonce) !important; }
+    .en-tete::before { background: linear-gradient(135deg, transparent 45%, rgba(217,154,61,0.18) 45%, rgba(217,154,61,0.18) 55%, transparent 55%) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   }
 </style>
 </head>
@@ -452,12 +557,15 @@ function rendreNewsletter(data) {
     categories[cat].push(art);
   });
 
+  let indexCat = 0;
   Object.keys(categories).forEach(cat => {
+    indexCat++;
     const groupe = document.createElement('div');
     groupe.className = 'categorie-groupe';
 
     const titreCat = document.createElement('div');
     titreCat.className = 'categorie-titre';
+    titreCat.setAttribute('data-num', String(indexCat).padStart(2, '0'));
     titreCat.textContent = cat;
     groupe.appendChild(titreCat);
 
@@ -470,7 +578,7 @@ function rendreNewsletter(data) {
       const div = document.createElement('div');
       div.className = 'carte';
       div.dataset.publics = publics.join(',');
-      div.style.borderLeftColor = couleur;
+      div.style.borderTopColor = couleur;
 
       const tagsHtml = publics.map(p => {
         const slug = slugPublic(p);
@@ -481,7 +589,7 @@ function rendreNewsletter(data) {
         <div class="tags-publics">${tagsHtml}</div>
         <h3>${art.titre || ''}</h3>
         <p>${art.description || ''}</p>
-        <a href="${art.lien_url || '#'}" target="_blank" rel="noopener">${art.lien_texte || 'En savoir plus'} →</a>`;
+        <a href="${art.lien_url || '#'}" target="_blank" rel="noopener">${art.lien_texte || 'En savoir plus'}</a>`;
       grille.appendChild(div);
     });
 
@@ -507,7 +615,7 @@ function appliquerFiltre() {
     const grille = groupe.querySelector('.grille-articles');
     const titre = groupe.querySelector('.categorie-titre');
     const visibles = grille.querySelectorAll('.carte:not(.masque)').length;
-    titre.style.display = visibles === 0 ? 'none' : '';
+    titre.style.display = visibles === 0 ? 'none' : 'flex';
     grille.style.display = visibles === 0 ? 'none' : 'grid';
     groupe.style.display = visibles === 0 ? 'none' : '';
   });
